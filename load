@@ -6,15 +6,27 @@ HOURS=$1
 DIR=$(dirname $0)
 KEY=$DIR/public
 
+end_of_day() {
+  let current_time=$(date -j -f "%a %b %d %T %Z %Y" "`date`" "+%s")
+  let five_oclock=$(date -j -f "%a %b %d %T %Z %Y" "`date | sed -E "s/[0-9]+\:[0-9]+\:[0-9]+/17:00:00/"`" "+%s")
+  let difference=five_oclock-current_time
+  echo $difference
+}
+
 if [ -z $HOURS ]; then
-  HOURS=1
+  SECONDS=3600
+elif [ $HOURS == 'eod' ]; then
+  SECONDS=$( end_of_day )
+else
+  SECONDS=$(( $HOURS*60*60 ))
 fi
 
+git config --global credential.username 'username'
 git config --global user.name "name"
 git config --global user.email "email"
 
 /usr/bin/ssh-add -D
-/usr/bin/ssh-add -t ${HOURS}H $KEY
+/usr/bin/ssh-add -t ${SECONDS} $KEY
 
 cat $(dirname $0)/cat_art.txt
 
