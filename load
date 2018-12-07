@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+set -e
+
+HOURS=$1
+DIR=$(dirname $0)
+KEY=$DIR/public
+
+if [ -z $HOURS ]; then
+  HOURS=1
+fi
+
+git config --global user.name "name"
+git config --global user.email "email"
+
+/usr/bin/ssh-add -D
+/usr/bin/ssh-add -t ${HOURS}H $KEY
+
+cat $(dirname $0)/cat_art.txt
+
+/usr/sbin/diskutil umount force $DIR
